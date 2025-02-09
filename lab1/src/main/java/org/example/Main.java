@@ -23,16 +23,15 @@ public class Main {
             processFile(file, integers, floats, strings);
         }
 
-        // Пишем в файл только если набор данных не пустой
-        if (!integers.isEmpty()) {
-            writeToFile("integers.txt", integers);
-        }
-        if (!floats.isEmpty()) {
-            writeToFile("floats.txt", floats);
-        }
-        if (!strings.isEmpty()) {
-            writeToFile("strings.txt", strings);
-        }
+        boolean hasIntegers = !integers.isEmpty();
+        boolean hasFloats = !floats.isEmpty();
+        boolean hasStrings = !strings.isEmpty();
+
+        writeToFile("integers.txt", integers);
+        writeToFile("floats.txt", floats);
+        writeToFile("strings.txt", strings);
+
+        removeUnnecessaryFiles(hasIntegers, hasFloats, hasStrings);
 
         printStatistics(integers, floats, strings);
     }
@@ -73,7 +72,7 @@ public class Main {
         }
     }
 
-    private static void classifyData(String line, Set<Integer> integers, Set<Double> floats, Set<String> strings) {
+    public static void classifyData(String line, Set<Integer> integers, Set<Double> floats, Set<String> strings) {
         try {
             integers.add(Integer.parseInt(line));
         } catch (NumberFormatException e1) {
@@ -86,35 +85,33 @@ public class Main {
     }
 
     public static <T> void writeToFile(String filename, Set<T> data) {
-        // Если данных нет — не создаем файл
         if (data.isEmpty()) return;
-
-        // Путь к файлу
         String path = outputPath.isEmpty() ? filename : Paths.get(outputPath, prefix + filename).toString();
-
-        try {
-            // Проверка, существует ли файл, если нет — создаем директорию и файл
-            Path filePath = Path.of(path);
-            Path dirPath = filePath.getParent();  // Получаем путь к директории
-
-            // Создаем директорию, если она не существует
-            if (dirPath != null && !Files.exists(dirPath)) {
-                Files.createDirectories(dirPath);
-            }
-
-            // Записываем данные в файл
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, appendMode))) {
-                for (T item : data) {
-                    writer.write(item.toString());
-                    writer.newLine();
-                }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, appendMode))) {
+            for (T item : data) {
+                writer.write(item.toString());
+                writer.newLine();
             }
         } catch (IOException e) {
-            System.err.println("Ошибка при записи в файл: " + path);
+            System.err.println("Error writing file: " + path);
         }
     }
 
+    private static void removeUnnecessaryFiles(boolean hasIntegers, boolean hasFloats, boolean hasStrings) {
+        Map<String, Boolean> fileStatus = Map.of(
+                "integers.txt", hasIntegers,
+                "floats.txt", hasFloats,
+                "strings.txt", hasStrings
+        );
 
+        for (Map.Entry<String, Boolean> entry : fileStatus.entrySet()) {
+            String path = outputPath.isEmpty() ? entry.getKey() : Paths.get(outputPath, prefix + entry.getKey()).toString();
+            File file = new File(path);
+            if (file.exists() && !entry.getValue()) {
+                file.delete();
+            }
+        }
+    }
 
     private static void printStatistics(Set<Integer> integers, Set<Double> floats, Set<String> strings) {
         System.out.println("Statistics:");
