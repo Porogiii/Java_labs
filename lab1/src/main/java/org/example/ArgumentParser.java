@@ -3,6 +3,8 @@ package org.example;
 import java.util.*;
 
 public class ArgumentParser {
+
+    //поля
     private String outputPath = "";
     private String prefix = "";
     private boolean appendMode = false;
@@ -35,6 +37,7 @@ public class ArgumentParser {
         }
     }
 
+    //геттеры
     public String getOutputPath() { return outputPath; }
     public String getPrefix() { return prefix; }
     public boolean isAppendMode() { return appendMode; }

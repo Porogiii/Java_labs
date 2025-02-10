@@ -5,6 +5,8 @@ import java.nio.file.*;
 import java.util.*;
 
 public class FileManager {
+
+    //поля
     private final String outputPath;
     private final String prefix;
     private final boolean appendMode;
@@ -15,6 +17,7 @@ public class FileManager {
         this.appendMode = appendMode;
     }
 
+    //записывает в файл, с нужным путём
     public <T> void writeToFile(String filename, Set<T> data) {
         if (data.isEmpty()) return;
         String path = outputPath.isEmpty() ? filename : Paths.get(outputPath, prefix + filename).toString();
@@ -28,6 +31,7 @@ public class FileManager {
         }
     }
 
+    //метод удаления ненужных файлов
     public void removeUnnecessaryFiles(boolean hasIntegers, boolean hasFloats, boolean hasStrings) {
         Map<String, Boolean> fileStatus = Map.of(
                 "integers.txt", hasIntegers,

@@ -3,6 +3,7 @@ package org.example;
 import java.util.*;
 
 public class StatsPrint {
+    //вывод статистики
     public static void printStatistics(Set<Integer> integers, Set<Double> floats, Set<String> strings, boolean fullStats, boolean shortStats) {
         System.out.println("Statistics:");
         if (shortStats || fullStats) {
@@ -17,6 +18,7 @@ public class StatsPrint {
         }
     }
 
+    //full статистика
     private static void printNumericStats(String type, Set<? extends Number> numbers) {
         if (numbers.isEmpty()) return;
         double min = Collections.min(numbers, Comparator.comparingDouble(Number::doubleValue)).doubleValue();
@@ -26,6 +28,7 @@ public class StatsPrint {
         System.out.printf("%s: Min=%.2f, Max=%.2f, Sum=%.2f, Avg=%.2f%n", type, min, max, sum, avg);
     }
 
+    //статистика string
     private static void printStringStats(Set<String> strings) {
         if (strings.isEmpty()) return;
         int minLen = strings.stream().mapToInt(String::length).min().orElse(0);
